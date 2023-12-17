@@ -21,7 +21,7 @@ def build_train_valid_test_datasets(input_file, tokenizer, max_length=80, config
     train_processors = build_processors(config['train_processors'])
     valid_processors = build_processors(config['valid_processors'])
 
-    assert len(input_file) == 2 # If you have files more than 2, modify code at here or merger them into train and dev
+    assert len(input_file) == 2 # If you have files more than 2, modify code at here
     train_ds = ComicDataset(input_file[0], tokenizer, train_processors, max_length)
     valid_ds = ComicDataset(input_file[1], tokenizer, valid_processors, max_length)
     test_ds = None
