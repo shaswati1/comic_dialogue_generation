@@ -24,15 +24,15 @@ class ComicDataset(Dataset):
 
     def __getitem__(self, idx):
         item = self.data[idx]
-        transcript = [item['text']] #utterances up to the t th image
-        response = [item['label']]  #utterance for the (t+1) th image
+        transcript = [item['text']] #utterances up to the t th panel
+        response = [item['label']]  #utterance for the (t+1) th panel
         prompts = [f'''The following is a conversation between a curious human and AI assistant.
                         Human: Here is a video and a transcript {transcript}.
                         Human: <|video|>
                         Human: Generate utterance for the last image of this video.
                         AI: {response}'''
                 ]
-        image_list = item['video']
+        image_list = item['video'] #list of images up to the (t+1) th panel
         inputs = self.processor(text=prompts, videos=image_list, num_frames=len(image_list), return_tensors='pt')
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
