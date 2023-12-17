@@ -12,7 +12,11 @@ from peft import LoraConfig, get_peft_config, get_peft_model
 from transformers import Trainer
 from transformers.training_args import TrainingArguments
 
-from mplug_owl import MplugOwlForConditionalGeneration, MplugOwlTokenizer
+
+from mplug_owl_video.tokenization_mplug_owl import MplugOwlTokenizer
+from mplug_owl_video.modeling_mplug_owl import MplugOwlForConditionalGeneration
+from mplug_owl_video.processing_mplug_owl import MplugOwlImageProcessor, MplugOwlProcessor
+
 from pipeline.data_utils import train_valid_test_datasets_provider
 from pipeline.utils import batchify, set_args
 

@@ -18,12 +18,10 @@ def load_jsonl(filename):
         return [json.loads(l.strip("\n")) for l in f.readlines()]
 
 class ComicDataset(Dataset):
-    def __init__(self, jsonl_file, pretrained_ckpt, device=device):
-        self.data = load_jsonl(jsonl_file)
-        self.image_processor = MplugOwlImageProcessor.from_pretrained(pretrained_ckpt)
-        self.tokenizer = MplugOwlTokenizer.from_pretrained(pretrained_ckpt)
-        self.processor = MplugOwlProcessor(self.image_processor, self.tokenizer)
-        self.device = device
+    def __init__(self, input_files, tokenizer, processors, max_length=2048):
+        self.data = load_jsonl(input_files)
+        self.tokenizer = tokenizer
+        self.processor = processors
 
     def __len__(self):
         return len(self.data)
