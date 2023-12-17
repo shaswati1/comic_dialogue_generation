@@ -1,4 +1,4 @@
-# comic_dialogue_generation
+# Comic Dialogue Generation
 This is a class project for CMSC 491/691 course.
 
 ## Usage
@@ -6,7 +6,7 @@ This is a class project for CMSC 491/691 course.
 1. Clone this repository and navigate to mPLUG-Owl directory
 ```bash
 git clone https://github.com/shaswati1/comic_dialogue_generation.git
-cd mPLUG-Owl
+cd mplug_owl
 ```
 
 2. Setup environment
