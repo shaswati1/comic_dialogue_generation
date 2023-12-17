@@ -7,6 +7,12 @@ import json
 from PIL import Image
 
 
+#For each sample we fixed the number of panels to be 6 and generate the utterance for 7th panel
+#The input should be a jsonl file with the following format:
+#{"video": ["path/to/image1", "path/to/image2", ...], "text": "transcript", "label": "response"}
+#Here "transcript" is the utterance for the first 6 panels and "response" is the utterance for the 7th panel
+
+
 def load_jsonl(filename):
     with open(filename, "r", encoding="utf-8") as f:
         return [json.loads(l.strip("\n")) for l in f.readlines()]
