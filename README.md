@@ -27,7 +27,7 @@ model, tokenizer, processor = get_model(pretrained_ckpt='your checkpoint directo
 Prepare model inputs.
 ```Python
 # We use a human/AI template to organize the context.
-# <video> denotes sequence of images placehold.
+# <|video|> denotes sequence of images placehold.
 prompts = [
 '''The following is a conversation between a curious human and AI assistant.
                     Human: Here is a video and a transcript {transcript}.
@@ -38,7 +38,7 @@ prompts = [
 
 # The image paths should be placed in the image_list and kept in the same order as in the prompts.
 # We support local file paths. You can customize the pre-processing of images by modifying the mplug_owl.modeling_mplug_owl.ImageProcessor
-image_list = ['/image1.jpg', '/image2.jpg']
+image_list = ['/image1.jpg', '/image2.jpg', '/image3.jpg', '/image4.jpg']
 ```
 
 
