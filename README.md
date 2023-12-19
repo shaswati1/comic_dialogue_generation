@@ -1,5 +1,6 @@
 # Comic Dialogue Generation
 
+
 ## Usage
 ### Install
 1. Clone this repository and navigate to mPLUG-Owl directory
