@@ -11,7 +11,7 @@ from icecream import ic
 from peft import LoraConfig, get_peft_config, get_peft_model
 from transformers import Trainer
 from transformers.training_args import TrainingArguments
-
+from model import Frozen
 
 from mplug_owl_video.tokenization_mplug_owl import MplugOwlTokenizer
 from mplug_owl_video.modeling_mplug_owl import MplugOwlForConditionalGeneration
@@ -20,6 +20,7 @@ from mplug_owl_video.processing_mplug_owl import MplugOwlImageProcessor, MplugOw
 from pipeline.data_utils import train_valid_test_datasets_provider
 from pipeline.utils import batchify, set_args
 
+from predict_util import process_and_dump_predictions
 
 parser = argparse.ArgumentParser()
 # Model
@@ -98,6 +99,10 @@ parser.add_argument('--ddp-find-unused-parameters', action='store_true',
                     help='unused parameters finding.')
 parser.add_argument('--do-train', action='store_true', default=True,
                     help='Whether to do training.')  
+parser.add_argument('--do-eval', action='store_true', default=True,
+                    help='Whether to do evaluation.') 
+parser.add_argument('--do-predict', action='store_true', default=False,
+                    help='Whether to do prediction.')
 parser.add_argument('--local_rank', type=int, default=-1,
                     help='Local rank')
 
@@ -132,6 +137,17 @@ class CustomTrainer(Trainer):
 
 
 def main():
+    params, hparams, gen_hparams, metric_hparams = get_args()
+    (
+        params.lm_init_dir,
+        params.visual_init_dir,
+        params.mapper_init_dir,
+    ) = Frozen._make_paths(
+        params.model_init_dir,
+        params.lm_init_dir,
+        params.visual_init_dir,
+        params.mapper_init_dir,
+    )
     args, left_argv = parser.parse_known_args()  
     ic(left_argv)
     config = Config(args.mm_config)
@@ -190,6 +206,8 @@ def main():
             learning_rate=args.lr,
             warmup_steps=args.num_warmup_steps,
             do_train=args.do_train,
+            do_eval=args.do_eval,
+            do_predict=args.do_predict,
             num_train_epochs=args.train_epochs,
             output_dir=args.save_path,
             save_strategy='steps',
@@ -215,6 +233,44 @@ def main():
     trainer.train()
 
     model.save_pretrained(args.save_path)
+
+    if args.do_predict:
+        eval_preds = trainer.predict(trainer.eval_dataset)
+        def _comic_context(eval_dataset):
+
+            input_ids = [
+                eval_dataset[i, False]["input_ids"] for i in range(len(eval_dataset))
+            ]
+            start_token_id = eval_dataset.tokenizer.convert_tokens_to_ids(
+                ["<|start|>"]
+            )[0]
+
+            def get_index(x):
+                try:
+                    return x.index(start_token_id)
+                except ValueError:
+                    return 0
+
+            input_ids = [x[get_index(x) :] for x in input_ids]
+
+            input_txt = eval_dataset.tokenizer.batch_decode(
+                input_ids, skip_special_tokens=False
+            )
+            return input_txt
+
+        make_ctx = _comic_context
+
+        process_and_dump_predictions(
+            args,
+            gen_hparams,
+            metric_hparams,
+            trainer.eval_dataset,
+            eval_preds,
+            make_ctx=make_ctx,
+        )
+
+    elif args.do_eval:
+        metrics = trainer.evaluate(trainer.eval_dataset)
 
 if __name__ == '__main__':
     main()
