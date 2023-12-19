@@ -1,5 +1,4 @@
 # Comic Dialogue Generation
-This is a class project for CMSC 491/691 course.
 
 ## Usage
 ### Install
