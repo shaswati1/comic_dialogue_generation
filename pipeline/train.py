@@ -11,7 +11,7 @@ from icecream import ic
 from peft import LoraConfig, get_peft_config, get_peft_model
 from transformers import Trainer
 from transformers.training_args import TrainingArguments
-from model import Frozen
+from mplug_owl import Frozen
 
 from mplug_owl_video.tokenization_mplug_owl import MplugOwlTokenizer
 from mplug_owl_video.modeling_mplug_owl import MplugOwlForConditionalGeneration
